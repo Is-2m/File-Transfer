@@ -1,0 +1,39 @@
+Container(
+          margin: const EdgeInsets.all(10),
+          height: 100,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5.0),
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.grey, offset: Offset(0, 1), blurRadius: 6)
+              ]),
+          // color: Colors.white,
+          width: MediaQuery.of(context).size.width * 0.95,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              RawMaterialButton(
+                onPressed: () {
+                  Navigate.pushPage(context, EditTask());
+                },
+                elevation: 2,
+                fillColor: Colors.amber,
+                child: const Icon(
+                  Icons.add,
+                  size: 35,
+                ),
+                padding: const EdgeInsets.all(5),
+                shape: const CircleBorder(),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                "Add New Task",
+                style: TextStyle(fontSize: 17),
+              )
+            ],
+          )),
