@@ -35,7 +35,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.getInstance().then((prefs) async {
     Shared.preferences = prefs;
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
     var uniqueName = DateTime.now().millisecond.toString();
     Workmanager().registerPeriodicTask(uniqueName, "check");
     runApp(MyApp());
@@ -55,8 +56,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Shared.fetchTasks();
-    theMagic();
+    if (Shared.preferences!.getBool("allGranted") == null) {
+      Shared.preferences!.setBool("allGranted", false);
+    } else {
+      Shared.allGranted = Shared.preferences!.getBool("allGranted")!;
+    }
+    // Shared.fetchTasks();
+    // theMagic();
   }
 
   @override
@@ -72,7 +78,7 @@ class _MyAppState extends State<MyApp> {
           tertiary: const Color(0xffe3e3e1),
         ),
       ),
-      home: Wrapper(),
+      home: MyHomePage(),
     );
   }
 }
@@ -87,8 +93,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return AddTask();
+    return Wrapper();
   }
 }
-
-

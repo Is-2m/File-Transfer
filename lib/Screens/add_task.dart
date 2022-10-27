@@ -17,10 +17,17 @@ class AddTask extends StatefulWidget {
 
 class _AddTaskState extends State<AddTask> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    theMagic();
+  }
+  @override
   @override
   Widget build(BuildContext context) {
+    
     // Shared.fetchTasks();
-    // print("watchers:$watchers");
+    // int("watchers:$watchers");
     return Scaffold(
       appBar: AppBar(
         actions: [

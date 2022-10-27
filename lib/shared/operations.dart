@@ -142,6 +142,7 @@ Future<bool> askPermission() async {
   var storage = await Permission.storage.status;
   var media = await Permission.accessMediaLocation.status;
   var externStor = await Permission.manageExternalStorage.status;
+  var battery=await Permission.ignoreBatteryOptimizations.status;
   if (storage.isDenied) {
     await Permission.storage.request();
   }
