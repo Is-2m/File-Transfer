@@ -16,6 +16,7 @@ void moveFiles(List<File> files) {
   files.forEach((element) {
     var destPath =
         "${Shared.Tasks.first.destPath}/${element.path.split('/').last}";
+
     // print("destPath: " + destPath);
     moveFile(sourceFile: element, newPath: destPath);
   });
@@ -37,22 +38,79 @@ Future<File> moveFileByPath(
   }
 }
 
-Future<File> moveFile(
+Future<File?> moveFile(
     {required File sourceFile, required String newPath}) async {
   try {
-    var newFile = await sourceFile.rename(newPath);
+    // Create the parent directory if it doesn't exist
+    final newFile = await createParentDirectoryAndRename(sourceFile, newPath);
+
     pushNotification(sourceFile.path);
+
     return newFile;
   } on FileSystemException catch (e) {
     print("error1: $e");
-    final newFile = await sourceFile.copy(newPath);
+
+    final newFile = await createParentDirectoryAndCopy(sourceFile, newPath);
+
     if (await sourceFile.exists()) {
       await sourceFile.delete();
       pushNotification(sourceFile.path);
     }
+
     return newFile;
   }
 }
+
+Future<File> createParentDirectoryAndRename(
+    File sourceFile, String newPath) async {
+  final newFile = File(newPath);
+  final newDirectory = Directory(newFile.parent.path);
+
+  print("Update: ${p.dirname(newFile.parent.path)}");
+  print("Update1: ${newFile.parent.path}");
+
+  if (!newDirectory.existsSync()) {
+    await newDirectory.create(recursive: true);
+  }
+
+  await sourceFile.rename(newPath);
+
+  return newFile;
+}
+
+Future<File> createParentDirectoryAndCopy(
+    File sourceFile, String newPath) async {
+  final newFile = File(newPath);
+  final newDirectory = Directory(newFile.parent.path);
+
+  print("Copy: ${p.dirname(newFile.parent.path)}");
+  print("Copy1: ${newFile.parent.path}");
+
+  if (!newDirectory.existsSync()) {
+    await newDirectory.create(recursive: true);
+  }
+
+  await sourceFile.copy(newPath);
+
+  return newFile;
+}
+
+// Future<File> moveFile(
+//     {required File sourceFile, required String newPath}) async {
+//   try {
+//     var newFile = await sourceFile.rename(newPath);
+//     pushNotification(sourceFile.path);
+//     return newFile;
+//   } on FileSystemException catch (e) {
+//     print("error1: $e");
+//     final newFile = await sourceFile.copy(newPath);
+//     if (await sourceFile.exists()) {
+//       await sourceFile.delete();
+//       pushNotification(sourceFile.path);
+//     }
+//     return newFile;
+//   }
+// }
 
 List<File> fetchFiles(sourcePath) {
   Directory dir = new Directory(sourcePath);
@@ -107,15 +165,20 @@ void theMagic() {
 }
 
 void checkAndMoveExistantFiles(Task task) {
-  print("checking and moving old things");
-  var files = fetchFiles(task.sourcePath);
-  print("files: $files\n${task.sourcePath}");
-  if (files.isNotEmpty) {
-    files.forEach((file) {
-      print("found Some we are moving");
-      moveFile(
-          sourceFile: file,
-          newPath: "${task.destPath!}/${file.path.split("/").last}");
+  print("Checking and moving old things");
+  moveFilesRecursively(task.sourcePath!, task.destPath!);
+}
+
+void moveFilesRecursively(String sourcePath, String destPath) {
+  Directory sourceDir = Directory(sourcePath);
+  if (sourceDir.existsSync()) {
+    sourceDir.listSync(recursive: true).forEach((FileSystemEntity entity) {
+      if (entity is File) {
+        String relativePath = entity.path.substring(sourcePath.length);
+        String newPath = "$destPath$relativePath";
+
+        moveFile(sourceFile: entity, newPath: newPath);
+      }
     });
   }
 }
@@ -138,11 +201,10 @@ pushNotification(String fileTransfered) {
 }
 
 Future<bool> askPermission() async {
-  
   var storage = await Permission.storage.status;
   var media = await Permission.accessMediaLocation.status;
-  var externStor = await Permission.manageExternalStorage.status;
-  var battery=await Permission.ignoreBatteryOptimizations.status;
+  // var externStor = await Permission.manageExternalStorage.status;
+  var battery = await Permission.ignoreBatteryOptimizations.status;
   if (storage.isDenied) {
     await Permission.storage.request();
   }
@@ -150,11 +212,12 @@ Future<bool> askPermission() async {
     await Permission.accessMediaLocation.request();
   }
   // if (externStor.isDenied) {
-    
   //   await Permission.manageExternalStorage.request();
   // }
-  if (media.isGranted && storage.isGranted ) {
-    
+  if (battery.isDenied) {
+    await Permission.manageExternalStorage.request();
+  }
+  if (media.isGranted && storage.isGranted && battery.isGranted) {
     return true;
   } else {
     return false;

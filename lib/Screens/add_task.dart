@@ -1,7 +1,7 @@
-import 'package:file_transfer/Testing things/Test1.dart';
+import 'package:file_transfer/testing_things/Test1.dart';
 import 'package:file_transfer/Screens/task_edit.dart';
 import 'package:file_transfer/shared/operations.dart';
-import 'package:file_transfer/testing things/tjriba.dart';
+import 'package:file_transfer/testing_things/tjriba.dart';
 import 'package:file_transfer/entities/Class_Task.dart';
 import 'package:file_transfer/shared/shared.dart';
 import 'package:file_transfer/util/Navigator.dart';
@@ -22,10 +22,9 @@ class _AddTaskState extends State<AddTask> {
     super.initState();
     theMagic();
   }
-  @override
+
   @override
   Widget build(BuildContext context) {
-    
     // Shared.fetchTasks();
     // int("watchers:$watchers");
     return Scaffold(
@@ -54,46 +53,44 @@ class _AddTaskState extends State<AddTask> {
       ),
       body: Shared.Tasks.isEmpty
           ? Container(
-                    margin: const EdgeInsets.all(10),
-                    height: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5.0),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0, 1),
-                              blurRadius: 6)
-                        ]),
-                    // color: Colors.white,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        RawMaterialButton(
-                          onPressed: () {
-                            Navigate.pushPage(context, EditTask());
-                          },
-                          elevation: 2,
-                          fillColor: Colors.amber,
-                          child: const Icon(
-                            Icons.add,
-                            size: 35,
-                          ),
-                          padding: const EdgeInsets.all(5),
-                          shape: const CircleBorder(),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        const Text(
-                          "Add New Task",
-                          style: TextStyle(fontSize: 17),
-                        )
-                      ],
-                    ))
+              margin: const EdgeInsets.all(10),
+              height: 100,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5.0),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.grey, offset: Offset(0, 1), blurRadius: 6)
+                  ]),
+              // color: Colors.white,
+              width: MediaQuery.of(context).size.width * 0.95,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  RawMaterialButton(
+                    onPressed: () {
+                      Navigate.pushPage(context, EditTask());
+                    },
+                    elevation: 2,
+                    fillColor: Colors.amber,
+                    child: const Icon(
+                      Icons.add,
+                      size: 35,
+                    ),
+                    padding: const EdgeInsets.all(5),
+                    shape: const CircleBorder(),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Text(
+                    "Add New Task",
+                    style: TextStyle(fontSize: 17),
+                  )
+                ],
+              ))
           : ListView.builder(
               itemCount: Shared.Tasks.length,
               itemBuilder: ((context, i) {
