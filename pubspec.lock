@@ -114,18 +114,18 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_background_service
-      sha256: "2bd57c05e0f2ec580e974fb6ad3796f023ecc10a5cc430e9a457f67edc2384de"
+      sha256: "7b9f15ab7d1a5784850ecfde722be4ace4dbcf1072a1fe33b7f9cbe871241e53"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.5"
+    version: "2.4.6"
   flutter_background_service_android:
     dependency: transitive
     description:
       name: flutter_background_service_android
-      sha256: "06840115fd818227994f88268ccf307898593920bf8aa65af4ebceaf240211f2"
+      sha256: "57fd631d800f7e56ca5bfadcfc00c8903eb721b23506b1a387342039521883ec"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.3"
   flutter_background_service_ios:
     dependency: transitive
     description:

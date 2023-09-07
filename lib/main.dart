@@ -61,8 +61,6 @@ class _MyAppState extends State<MyApp> {
     } else {
       Shared.allGranted = Shared.preferences!.getBool("allGranted")!;
     }
-    // Shared.fetchTasks();
-    // theMagic();
   }
 
   @override

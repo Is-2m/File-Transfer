@@ -7,10 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Shared {
   static var Tasks = new List<Task>.empty(growable: true);
   static SharedPreferences? preferences;
-  static bool allGranted=false;
+  static bool allGranted = false;
 
   static void fetchTasks() {
-    if (preferences!.containsKey("tasks") && preferences!.get("tasks") != null) {
+    if (preferences!.containsKey("tasks") &&
+        preferences!.get("tasks") != null) {
       if (Tasks.isNotEmpty) {
         Tasks = new List<Task>.empty(growable: true);
       }

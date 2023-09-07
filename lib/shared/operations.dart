@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:file_transfer/entities/Class_Task.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' as p;
@@ -11,16 +12,6 @@ import 'package:watcher/watcher.dart';
 List<DirectoryWatcher> watchers = List.empty(growable: true);
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-void moveFiles(List<File> files) {
-  // p.joi
-  files.forEach((element) {
-    var destPath =
-        "${Shared.Tasks.first.destPath}/${element.path.split('/').last}";
-
-    // print("destPath: " + destPath);
-    moveFile(sourceFile: element, newPath: destPath);
-  });
-}
 
 Future<File> moveFileByPath(
     {required String sourcePath, required String newPath}) async {
@@ -39,9 +30,11 @@ Future<File> moveFileByPath(
 }
 
 Future<File?> moveFile(
-    {required File sourceFile, required String newPath}) async {
+    {required String sourcePath, required String newPath}) async {
   try {
     // Create the parent directory if it doesn't exist
+
+    File sourceFile = File(sourcePath);
     final newFile = await createParentDirectoryAndRename(sourceFile, newPath);
 
     pushNotification(sourceFile.path);
@@ -49,6 +42,7 @@ Future<File?> moveFile(
     return newFile;
   } on FileSystemException catch (e) {
     print("error1: $e");
+    File sourceFile = File(sourcePath);
 
     final newFile = await createParentDirectoryAndCopy(sourceFile, newPath);
 
@@ -66,9 +60,6 @@ Future<File> createParentDirectoryAndRename(
   final newFile = File(newPath);
   final newDirectory = Directory(newFile.parent.path);
 
-  print("Update: ${p.dirname(newFile.parent.path)}");
-  print("Update1: ${newFile.parent.path}");
-
   if (!newDirectory.existsSync()) {
     await newDirectory.create(recursive: true);
   }
@@ -83,9 +74,6 @@ Future<File> createParentDirectoryAndCopy(
   final newFile = File(newPath);
   final newDirectory = Directory(newFile.parent.path);
 
-  print("Copy: ${p.dirname(newFile.parent.path)}");
-  print("Copy1: ${newFile.parent.path}");
-
   if (!newDirectory.existsSync()) {
     await newDirectory.create(recursive: true);
   }
@@ -95,22 +83,7 @@ Future<File> createParentDirectoryAndCopy(
   return newFile;
 }
 
-// Future<File> moveFile(
-//     {required File sourceFile, required String newPath}) async {
-//   try {
-//     var newFile = await sourceFile.rename(newPath);
-//     pushNotification(sourceFile.path);
-//     return newFile;
-//   } on FileSystemException catch (e) {
-//     print("error1: $e");
-//     final newFile = await sourceFile.copy(newPath);
-//     if (await sourceFile.exists()) {
-//       await sourceFile.delete();
-//       pushNotification(sourceFile.path);
-//     }
-//     return newFile;
-//   }
-// }
+
 
 List<File> fetchFiles(sourcePath) {
   Directory dir = new Directory(sourcePath);
@@ -122,7 +95,6 @@ List<File> fetchFiles(sourcePath) {
 }
 
 void watchDirectory(Task task) {
-  print("watch");
   bool isFound = false;
   DirectoryWatcher? watcher;
   watchers.forEach((element) {
@@ -131,29 +103,28 @@ void watchDirectory(Task task) {
     watcher = element;
   });
   if (isFound) {
-    watcher = DirectoryWatcher(task.sourcePath!);
     watcher!.events.listen((event) {
       if (event == ChangeType.ADD) {
-        moveFileByPath(
-            sourcePath: event.path,
-            newPath: "${task.destPath}/${event.path.split("/").last}");
+        String relativePath = event.path.substring(task.sourcePath!.length);
+        String newPath = "${task.destPath}$relativePath";
+        moveFile(sourcePath: event.path, newPath: newPath);
       }
     });
-    // watcher.events.
   } else {
     watchers.add(DirectoryWatcher(task.sourcePath!));
     watchers.last.events.listen((event) {
       if (event.type == ChangeType.ADD) {
-        moveFileByPath(
-            sourcePath: event.path,
-            newPath: "${task.destPath}/${event.path.split("/").last}");
+        String relativePath = event.path.substring(task.sourcePath!.length);
+        String newPath = "${task.destPath}$relativePath";
+        moveFile(sourcePath: event.path, newPath: newPath);
+        //'event.path' is the new full path to the new created/detected file
+        //it's given as an argument cause i'll need to create File Object out of it
       }
     });
   }
 }
 
 void theMagic() {
-  // watchers.forEach((element) {element=null;});
   Shared.fetchTasks();
   var tasks = Shared.Tasks;
   tasks.forEach((task) {
@@ -165,7 +136,6 @@ void theMagic() {
 }
 
 void checkAndMoveExistantFiles(Task task) {
-  print("Checking and moving old things");
   moveFilesRecursively(task.sourcePath!, task.destPath!);
 }
 
@@ -176,8 +146,8 @@ void moveFilesRecursively(String sourcePath, String destPath) {
       if (entity is File) {
         String relativePath = entity.path.substring(sourcePath.length);
         String newPath = "$destPath$relativePath";
-
-        moveFile(sourceFile: entity, newPath: newPath);
+      
+        moveFile(sourcePath: entity.path, newPath: newPath);
       }
     });
   }

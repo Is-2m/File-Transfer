@@ -1,12 +1,11 @@
-import 'package:file_transfer/testing_things/Test1.dart';
 import 'package:file_transfer/Screens/task_edit.dart';
 import 'package:file_transfer/shared/operations.dart';
-import 'package:file_transfer/testing_things/tjriba.dart';
 import 'package:file_transfer/entities/Class_Task.dart';
 import 'package:file_transfer/shared/shared.dart';
 import 'package:file_transfer/util/Navigator.dart';
 import 'package:file_transfer/widgets/detailed_task.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddTask extends StatefulWidget {
   const AddTask({Key? key}) : super(key: key);
@@ -25,8 +24,6 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
-    // Shared.fetchTasks();
-    // int("watchers:$watchers");
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -37,15 +34,13 @@ class _AddTaskState extends State<AddTask> {
                 Navigate.pushPage(context, EditTask());
               },
             ),
-            onTap: () {
-              // Fluttertoast.showToast(msg: "InkWell clicked",);
-            },
+            onTap: () {},
           ),
           InkWell(
             child: IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigate.pushPage(context, Test1());
+                Fluttertoast.showToast(msg: "nothing to show here yet");
               },
             ),
           ),
@@ -62,7 +57,6 @@ class _AddTaskState extends State<AddTask> {
                     BoxShadow(
                         color: Colors.grey, offset: Offset(0, 1), blurRadius: 6)
                   ]),
-              // color: Colors.white,
               width: MediaQuery.of(context).size.width * 0.95,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
