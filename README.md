@@ -29,8 +29,5 @@ The app empowers users to create tasks, defining source (e.g., DCIM) and destina
 3. The app will automatically move any new files from the source to the destination.
 4. Manually sort and select files in the destination directory for further actions, such as uploading to Google Photos.
 
-//## Screenshots
-
-//Include screenshots or gifs demonstrating the app's interface and functionality.
 Feel free to explore and modify the code to suit your needs.
 
